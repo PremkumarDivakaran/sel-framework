@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="0" passed="0" failed="0" skipped="0">
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2024-01-23T11:05:54 IST" name="MyTestSuite" finished-at="2024-01-23T11:05:54 IST" duration-ms="12">
+  <suite started-at="2024-04-10T09:32:57 IST" name="MyTestSuite" finished-at="2024-04-10T09:33:04 IST" duration-ms="7185">
     <groups>
     </groups>
-    <test started-at="2024-01-23T11:05:54 IST" name="MyTest" finished-at="2024-01-23T11:05:54 IST" duration-ms="12">
+    <test started-at="2024-04-10T09:32:57 IST" name="MyTest" finished-at="2024-04-10T09:33:04 IST" duration-ms="7185">
+      <class name="org.example.test.LoginTest">
+        <test-method signature="checkLogin()[pri:0, instance:org.example.test.LoginTest@22635ba0]" started-at="2024-04-10T09:32:57 IST" name="checkLogin" finished-at="2024-04-10T09:33:04 IST" duration-ms="7078" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- checkLogin -->
+        <test-method is-config="true" signature="quitBrowser()[pri:0, instance:org.example.test.LoginTest@22635ba0]" started-at="2024-04-10T09:33:04 IST" name="quitBrowser" finished-at="2024-04-10T09:33:04 IST" duration-ms="83" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- quitBrowser -->
+      </class> <!-- org.example.test.LoginTest -->
     </test> <!-- MyTest -->
   </suite> <!-- MyTestSuite -->
 </testng-results>
