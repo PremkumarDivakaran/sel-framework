@@ -20,18 +20,31 @@ public class DriverInstance {
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     public static void setDriver(){
-        if(!ConfigurationManager.getConfiguration().remote()){
-            if(ConfigurationManager.getConfiguration().browser().equals(BrowserType.CHROME)){
+        /*
+        // Read Remote and Browser from Property File
+        boolean remote = ConfigurationManager.getConfiguration().remote();
+        String remoteUrl = ConfigurationManager.getConfiguration().remoteUrl();
+        BrowserType browser = ConfigurationManager.getConfiguration().browser();
+        */
+
+        // Read Remote and Browser from Maven Environment Varibale
+        boolean remote = Boolean.parseBoolean(System.getProperty("remote", "false"));
+        String remoteUrl = System.getProperty("remoteUrl", "localhost");
+        String browserName = System.getProperty("browserName", "chrome");
+        BrowserType browser = BrowserType.valueOf(browserName.toUpperCase());
+
+        if(!remote){
+            if(browser.equals(BrowserType.CHROME)){
                 WebDriverManager.chromedriver().setup();
-                ChromeOptions chrome_options = new ChromeOptions();
-                chrome_options.addArguments("--headless");
-                driver.set(new ChromeDriver(chrome_options));
-            }else if(ConfigurationManager.getConfiguration().browser().equals("firefox")){
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--headless");
+                driver.set(new ChromeDriver(chromeOptions));
+            }else if(browser.equals(BrowserType.FIREFOX)){
                 WebDriverManager.firefoxdriver().setup();
                 driver.set(new FirefoxDriver());
             }
         }else{
-            if(ConfigurationManager.getConfiguration().browser().equals("chrome")){
+            if(browser.equals(BrowserType.CHROME)){
                 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
                 desiredCapabilities.setBrowserName(Browser.CHROME.browserName());
                 desiredCapabilities.setVersion("");
@@ -43,12 +56,11 @@ public class DriverInstance {
                 desiredCapabilities.merge(chrome_options);
                 try {
                     driver.set(
-                            new RemoteWebDriver(new URL("http://" + ConfigurationManager.getConfiguration().remoteUrl()
-                                     + "/wd/hub"), chrome_options));
+                            new RemoteWebDriver(new URL("http://" + remoteUrl + "/wd/hub"), chrome_options));
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
-            } else if(ConfigurationManager.getConfiguration().browser().equals("firefox")){
+            } else if(browser.equals(BrowserType.FIREFOX)){
                 FirefoxOptions firefox_options = new FirefoxOptions();
                 firefox_options.addArguments("--no-sandbox");
                 firefox_options.addArguments("--disable-dev-shm-usage");
@@ -56,8 +68,7 @@ public class DriverInstance {
                 firefox_options.addArguments("--headless");
                 try {
                     driver.set(
-                            new RemoteWebDriver(new URL("http://" + ConfigurationManager.getConfiguration().remoteUrl()
-                                    + "/wd/hub"), firefox_options));
+                            new RemoteWebDriver(new URL("http://" + remoteUrl + "/wd/hub"), firefox_options));
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
