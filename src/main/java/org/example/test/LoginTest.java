@@ -25,5 +25,41 @@ public class LoginTest extends BaseTest {
         Assert.assertEquals(title,"Logged In Successfully");
     }
 
+    @Test
+    public void checkLogin1(){
+        String title = loginInToApp(ConfigurationManager.getConfiguration().username(),
+                ConfigurationManager.getConfiguration().password())
+                .getTitle();
+
+        Assert.assertEquals(title,"Logged In Successfully");
+    }
+
+    @Test
+    public void checkLogin2(){
+        String title = loginInToApp(ConfigurationManager.getConfiguration().username(),
+                ConfigurationManager.getConfiguration().password())
+                .getTitle();
+
+        Assert.assertEquals(title,"Logged In Successfully");
+    }
+
+    @Test
+    public void checkLogin3(){
+        String title = loginInToApp(ConfigurationManager.getConfiguration().username(),
+                ConfigurationManager.getConfiguration().password())
+                .getTitle();
+
+        Assert.assertEquals(title,"Logged In Successfully");
+    }
+
+    @Test
+    public void checkLogin4(){
+        String title = loginInToApp(ConfigurationManager.getConfiguration().username(),
+                ConfigurationManager.getConfiguration().password())
+                .getTitle();
+
+        Assert.assertEquals(title,"Logged In Successfully");
+    }
+
 
 }
