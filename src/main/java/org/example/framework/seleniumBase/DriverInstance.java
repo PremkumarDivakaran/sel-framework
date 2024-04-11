@@ -41,7 +41,9 @@ public class DriverInstance {
                 driver.set(new ChromeDriver(chromeOptions));
             }else if(browser.equals(BrowserType.FIREFOX)){
                 WebDriverManager.firefoxdriver().setup();
-                driver.set(new FirefoxDriver());
+                FirefoxOptions firefox_options = new FirefoxOptions();
+                firefox_options.addArguments("--headless");
+                driver.set(new FirefoxDriver(firefox_options));
             }
         }else{
             if(browser.equals(BrowserType.CHROME)){
