@@ -17,14 +17,19 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.creditdatamw.labs</groupId>
+      <artifactId>zerocell-core</artifactId>
+      <version>0.5.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>7.8.0</version>
+      <version>7.10.2</version>
     </dependency>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.19.1</version>
+      <version>4.27.0</version>
     </dependency>
     <dependency>
       <groupId>com.aventstack</groupId>
@@ -37,11 +42,6 @@
       <version>1.0.12</version>
     </dependency>
     <dependency>
-      <groupId>io.github.bonigarcia</groupId>
-      <artifactId>webdrivermanager</artifactId>
-      <version>5.6.2</version>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.30</version>
@@ -52,16 +52,22 @@
       <artifactId>testng</artifactId>
       <version>7.8.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
 
   </dependencies>
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version> <!-- Adjust the version as needed -->
-
         <configuration>
           <source>11</source> <!-- Java source version -->
           <target>11</target> <!-- Java target version -->

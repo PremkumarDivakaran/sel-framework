@@ -4,3 +4,7 @@ allure-results
 target/
 */index.html
 *.iml
+.DS_Store
+*/.DS_Store
+*/.idea
+*/.gradle
