@@ -34,3 +34,10 @@ jobs:
       # Run Maven clean and test
       - name: Run Maven clean test
         run: mvn clean test
+
+      # Upload the generated HTML report as an artifact
+      - name: Upload test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: reports/index.html
