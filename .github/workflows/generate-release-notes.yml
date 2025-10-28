@@ -1,13 +1,9 @@
 name: "Auto Generate Release Notes"
 
 on:
-  push:
-    tags:
-      - 'release-*'
-  release:
-    types:
-      - created
-  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 permissions:
   contents: write
@@ -15,6 +11,7 @@ permissions:
 
 jobs:
   generate-release-notes:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -48,12 +45,19 @@ jobs:
       # 3️⃣ Generate release notes using Decathlon only when required
       - name: Generate release notes
         if: steps.check_labels.outputs.should_generate == 'true'
-        uses: Decathlon/release-notes-generator-action@98423db7024696a339f3988ac8a2b051c5860741 # v3.1.6
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
-          args: >
-            --output-file docs/external/releases.md
-            --exclude-label skip_release_note
-            --include-label add_release_note
+          github-token: ${{ github.token }}
+          script: |
+            const fs = require('fs');
+            const pr = context.payload.pull_request;
+            const line = `- ${pr.title} (#${pr.number}) by @${pr.user.login}\n`;
+            
+            const file = 'docs/external/release.md';
+            fs.mkdirSync('docs/external', { recursive: true });
+            fs.appendFileSync(file, line);
+            
+            console.log(`📝 Added release note entry:\n${line}`);
 
       # 4️⃣ Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
