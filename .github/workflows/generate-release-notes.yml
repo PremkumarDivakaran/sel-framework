@@ -47,22 +47,22 @@ jobs:
         if: steps.check_labels.outputs.should_generate == 'true'
         uses: Decathlon/release-notes-generator-action@98423db7024696a339f3988ac8a2b051c5860741 # v3.1.6
         with:
-          output_file: "release.md"
+          output_file: "docs/external/releases.md"
           include_labels: add_release_note
           exclude_labels: skip_release_note
           github_token: ${{ github.token }}
 
-      # 4️⃣ Commit and push updated release.md if it changed
+      # 4️⃣ Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add release.md
+          git add docs/external/releases.md
           if git diff --cached --quiet; then
-            echo "No changes detected in release.md — skipping commit."
+            echo "No changes detected in releases.md — skipping commit."
           else
-            git commit -m "docs: update release.md after merge of #${{ github.event.pull_request.number }}"
+            git commit -m "docs: update releases.md after merge of #${{ github.event.pull_request.number }}"
             git push origin HEAD:${GITHUB_REF#refs/heads/}
             echo "✅ Release notes updated and pushed."
           fi
