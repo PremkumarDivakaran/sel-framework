@@ -18,3 +18,7 @@
   **Update API for Users and System**
   + PR #12 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
+
+  **Fixed a duplicate name error in UI**
+  + PR #14 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
