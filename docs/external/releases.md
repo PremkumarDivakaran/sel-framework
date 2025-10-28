@@ -22,3 +22,7 @@
   **Fixed a duplicate name error in UI**
   + PR #14 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
+
+  **Update User APIs and Add OAuth Support**
+  + PR #16 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
