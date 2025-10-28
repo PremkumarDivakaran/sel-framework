@@ -11,7 +11,7 @@ runs:
         github_token: ${{ github.token }}
 
     - name: Validate Required Labels
-      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      uses: actions/github-script@60a0d83039c74a4a4e2d7c7fba9a0bba3e3d5b7d3 # v7.0.1 pinned commit
       with:
         github-token: ${{ github.token }}
         script: |
@@ -19,17 +19,18 @@ runs:
             .split(',')
             .map(l => l.trim())
             .filter(Boolean);
-          
+
           console.log(`PR labels: ${labels.join(', ') || 'none'}`);
-          
-          if (labels.includes('add_release_note')) {
-            console.log("✅ 'add_release_note' found — release notes expected");
-          } else if (labels.includes('skip_release_note')) {
-            console.log("⏩ 'skip_release_note' found — release notes will be skipped");
+
+          const hasAdd = labels.includes('add_release_note');
+          const hasSkip = labels.includes('skip_release_note');
+
+          if (hasAdd && hasSkip) {
+            core.setFailed("❌ Both 'add_release_note' and 'skip_release_note' labels are present. Only one is allowed.");
+          } else if (!hasAdd && !hasSkip) {
+            core.setFailed("❌ Missing required label. Add one of: 'add_release_note' or 'skip_release_note'.");
+          } else if (hasAdd) {
+            console.log("✅ 'add_release_note' found — release notes expected.");
           } else {
-            core.setFailed(
-              `Missing release note label.\n` +
-              `Current labels: ${labels.length ? labels.join(', ') : 'none'}\n` +
-              `Add one of: 'add_release_note' or 'skip_release_note'`
-            );
+            console.log("⏩ 'skip_release_note' found — release notes will be skipped.");
           }
