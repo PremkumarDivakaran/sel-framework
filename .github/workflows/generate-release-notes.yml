@@ -50,36 +50,32 @@ jobs:
           github-token: ${{ github.token }}
           script: |
             const fs = require('fs');
+            const path = 'docs/external/releases.md';
             const pr = context.payload.pull_request;
-            const file = 'docs/external/releases.md';
+            const newLine = `
+              **${ pr.title }**
+              + PR #${pr.number} by @${pr.user.login}
+              + _TODO: Add detailed release note (API details, impact, or feature summary)_\n`;
+              
             fs.mkdirSync('docs/external', { recursive: true });
-            const entry = `\n**${pr.title}**\n  + PR #${pr.number} by @${pr.user.login} \n  + _TODO: Add detailed release note (API details, impact, or feature summary)_\n`;
-            
-            if (!fs.existsSync(file)) {
-              // Create file with the header and first entry
-              fs.writeFileSync(file, `### Next Release\n${entry}`);
-            } else {
-              let content = fs.readFileSync(file, 'utf8');
-            
-              if (content.includes('### Next Release')) {
-                const parts = content.split(/(### Next Release\s*\n)/);
-                const header = parts[1] || '';
-                const afterHeader = parts[2] || '';
-                const updatedAfterHeader = afterHeader.replace(
-                  /(### Release\s*\d+)/,
-                  `${entry}$1`
-                );
-                if (updatedAfterHeader === afterHeader) {
-                  content = `${header}${afterHeader}${entry}`;
-                } else {
-                  content = `${header}${updatedAfterHeader}`;
-                }
-              } else {
-                content = `### Next Release\n${entry}${content}`;
-              }
-              fs.writeFileSync(file, content);
+            if (!fs.existsSync(path)) {
+              fs.writeFileSync(path, '### Next Release\n\n');
             }
-            console.log(`📝 Appended release note entry for PR #${pr.number}`);
+            
+            let content = fs.readFileSync(path, 'utf8').trim();
+            if (!content.includes('### Next Release')) {
+              content += '\n\n### Next Release\n';
+            }
+            if (content.includes(`PR #${pr.number}`)) {
+              console.log('Note already exists, skipping duplicate.');
+              process.exit(0);
+            }
+            const updatedContent = content.replace(
+              /### Next Release[\s\S]*$/,
+              match => `${match}\n${newLine}`
+            );
+            fs.writeFileSync(path, updatedContent.trim() + '\n', 'utf8');
+            console.log(`📝 Added release note for PR #${pr.number} at the bottom.`);
 
       # Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
