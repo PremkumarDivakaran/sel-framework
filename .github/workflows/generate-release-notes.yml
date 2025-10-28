@@ -47,10 +47,10 @@ jobs:
         if: steps.check_labels.outputs.should_generate == 'true'
         uses: Decathlon/release-notes-generator-action@98423db7024696a339f3988ac8a2b051c5860741 # v3.1.6
         with:
-          output_file: "docs/external/releases.md"
-          include_labels: add_release_note
-          exclude_labels: skip_release_note
-          github_token: ${{ github.token }}
+          args: >
+            --output-file docs/external/releases.md
+            --exclude-label skip_release_note
+            --include-label add_release_note
 
       # 4️⃣ Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
