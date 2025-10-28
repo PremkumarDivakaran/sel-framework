@@ -1,0 +1,1 @@
+- Test release note generator (#5) by @PremkumarDivakaran
