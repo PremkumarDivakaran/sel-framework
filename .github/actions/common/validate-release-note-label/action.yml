@@ -11,7 +11,7 @@ runs:
         github_token: ${{ github.token }}
 
     - name: Validate Required Labels
-      uses: actions/github-script@60a0d83039c74a4a4e2d7c7fba9a0bba3e3d5b7d3 # v7.0.1 pinned commit
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         github-token: ${{ github.token }}
         script: |
