@@ -51,13 +51,28 @@ jobs:
           script: |
             const fs = require('fs');
             const pr = context.payload.pull_request;
-            const line = `- ${pr.title} (#${pr.number}) by @${pr.user.login}\n`;
-            
             const file = 'docs/external/releases.md';
             fs.mkdirSync('docs/external', { recursive: true });
-            fs.appendFileSync(file, line);
-            
-            console.log(`📝 Added release note entry:\n${line}`);
+            const entry = `
+              + **${pr.title}**
+              + PR #${pr.number} by @${pr.user.login}
+              + _TODO: Add detailed release note (API details, impact, or feature summary)_\n`;
+              
+            if (!fs.existsSync(file)) {
+              fs.writeFileSync(file, `### Next Release\n\n${entry}`);
+            } else {
+              let content = fs.readFileSync(file, 'utf8');
+              if (content.includes('### Next Release')) {
+                content = content.replace(
+                /(### Next Release\s*\n+)/,
+                `$1${entry}`
+                );
+              } else {
+                content = `### Next Release\n\n${entry}${content}`;
+              } 
+              fs.writeFileSync(file, content);
+            }
+            console.log(`📝 Appended release note entry for PR #${pr.number}`);
 
       # Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
