@@ -53,7 +53,7 @@ jobs:
             const pr = context.payload.pull_request;
             const line = `- ${pr.title} (#${pr.number}) by @${pr.user.login}\n`;
             
-            const file = 'docs/external/release.md';
+            const file = 'docs/external/releases.md';
             fs.mkdirSync('docs/external', { recursive: true });
             fs.appendFileSync(file, line);
             
@@ -73,3 +73,20 @@ jobs:
             git push origin HEAD:${GITHUB_REF#refs/heads/}
             echo "✅ Release notes updated and pushed."
           fi
+
+      # Print release.md content for verification
+      - name: Append PR details to release.md
+        if: steps.check.outputs.should_generate == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const fs = require('fs');
+            const pr = context.payload.pull_request;
+            const line = `- ${pr.title} (#${pr.number}) by @${pr.user.login}\n`;
+            
+            const file = 'docs/external/releases.md';
+            fs.mkdirSync('docs/external', { recursive: true });
+            fs.appendFileSync(file, line);
+            console.log(`📝 Added release note entry:\n${line}`);
+            console.log('Current file content:\n', fs.readFileSync(file, 'utf8'));
