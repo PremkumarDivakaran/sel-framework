@@ -1,1 +1,2 @@
 - Test release note generator (#5) by @PremkumarDivakaran
+- Test release note generator - New notes added!!!! (#6) by @PremkumarDivakaran
