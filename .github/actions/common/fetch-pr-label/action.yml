@@ -10,9 +10,6 @@ outputs:
   labels:
     description: "Comma-separated list of all PR labels"
     value: ${{ steps.fetch.outputs.labels }}
-  label_count:
-    description: "Number of labels on the PR"
-    value: ${{ steps.fetch.outputs.label_count }}
 
 runs:
   using: "composite"
@@ -24,46 +21,22 @@ runs:
         github-token: ${{ inputs.github_token }}
         script: |
           const { owner, repo } = context.repo;
-          let prNumber;
-
-          if (context.payload.pull_request) {
-            prNumber = context.payload.pull_request.number;
-            console.log(`Detected PR event: #${prNumber}`);
-          } else if (context.payload.head_commit) {
-            const commitSha = context.payload.head_commit.id;
-            console.log(`Finding PR for commit: ${commitSha}`);
-            try {
-              const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                owner,
-                repo,
-                commit_sha: commitSha,
-              });
-              if (prs.length > 0) {
-                prNumber = prs[0].number;
-                console.log(`Found PR #${prNumber} for commit.`);
-              } else {
-                console.log("No PR found for this commit. Skipping label fetch.");
-                core.setOutput('labels', '');
-                core.setOutput('label_count', '0');
-                return;
-              }
-            } catch (error) {
-              console.log(`Error fetching PR: ${error.message}`);
-              core.setOutput('labels', '');
-              core.setOutput('label_count', '0');
-              return;
-            }
-          } else {
-            console.log("No PR or commit context found.");
+          
+          if (!context.payload.pull_request) {
+            console.log("No PR context found. Exiting.");
             core.setOutput('labels', '');
-            core.setOutput('label_count', '0');
             return;
           }
-
-          const { data: prData } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
-          const labels = (prData.labels || []).map(l => l.name);
-          const labelCount = labels.length;
-          console.log(`Found ${labelCount} label(s): ${labels.join(', ') || 'none'}`);
-
-          core.setOutput('labels', labels.join(','));
-          core.setOutput('label_count', labelCount.toString());
+          
+          const prNumber = context.payload.pull_request.number;
+          console.log(`Detected PR event: #${prNumber}`);
+          
+          try {
+            const { data: prData } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
+            const labels = (prData.labels || []).map(l => l.name);
+            console.log(`Found ${labels.length} label(s): ${labels.join(', ') || 'none'}`);
+            core.setOutput('labels', labels.join(','));
+          } catch (error) {
+            console.error(`Error fetching PR labels: ${error.message}`);
+            core.setOutput('labels', '');
+          }
