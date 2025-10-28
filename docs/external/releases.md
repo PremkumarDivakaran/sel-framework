@@ -1,3 +1,9 @@
+### Next Release
+
+
+  + **Update Shopping cart feature**
+  + PR #8 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
 ### Release 1.0.0
 
 #### Database
