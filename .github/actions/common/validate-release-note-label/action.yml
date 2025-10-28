@@ -1,0 +1,35 @@
+name: "Validate Release Note Label"
+description: "Ensures PR has either add_release_note or skip_release_note label"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Fetch PR Labels
+      id: fetch-labels
+      uses: ./.github/actions/common/fetch-pr-label
+      with:
+        github_token: ${{ github.token }}
+
+    - name: Validate Required Labels
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          const labels = ('${{ steps.fetch-labels.outputs.labels }}' || '')
+            .split(',')
+            .map(l => l.trim())
+            .filter(Boolean);
+          
+          console.log(`PR labels: ${labels.join(', ') || 'none'}`);
+          
+          if (labels.includes('add_release_note')) {
+            console.log("✅ 'add_release_note' found — release notes expected");
+          } else if (labels.includes('skip_release_note')) {
+            console.log("⏩ 'skip_release_note' found — release notes will be skipped");
+          } else {
+            core.setFailed(
+              `Missing release note label.\n` +
+              `Current labels: ${labels.length ? labels.join(', ') : 'none'}\n` +
+              `Add one of: 'add_release_note' or 'skip_release_note'`
+            );
+          }

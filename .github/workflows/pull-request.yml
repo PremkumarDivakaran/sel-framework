@@ -1,0 +1,31 @@
+name: pull-request
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
+  cancel-in-progress: true
+on:
+  pull_request:
+  merge_group:
+    branches: [ master ]
+  workflow_dispatch:
+permissions:
+  # Required by actions/checkout
+  contents: read
+  # Required by EnricoMi/publish-unit-test-result-action
+  checks: write
+  # Required by EnricoMi/publish-unit-test-result-action
+  pull-requests: write
+  # Required for ./.github/actions/pr-linking-default action
+  issues: write
+  # This is required for requesting the JWT for aws-actions/configure-aws-credentials
+  id-token: write
+  # This is required for pulling artifacts
+  actions: read
+jobs:
+  pre-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+      - name: Enforce release note label
+        uses: ./.github/actions/common/validate-release-note-label

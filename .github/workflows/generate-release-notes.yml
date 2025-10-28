@@ -1,0 +1,68 @@
+name: "Auto Generate Release Notes"
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  generate-release-notes:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # 1️⃣ Fetch PR labels
+      - name: Fetch PR Labels
+        id: fetch-labels
+        uses: ./.github/actions/common/fetch-pr-label
+        with:
+          github_token: ${{ github.token }}
+
+      # 2️⃣ Decide if release notes should be generated
+      - name: Check label rules
+        id: check_labels
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const labels = ('${{ steps.fetch-labels.outputs.labels }}' || '').split(',').map(l => l.trim());
+            console.log(`PR labels: ${labels.length ? labels.join(', ') : 'none'}`);
+
+            const add = labels.includes('add_release_note');
+            const skip = labels.includes('skip_release_note');
+            const shouldGenerate = add && !skip;
+
+            core.setOutput('should_generate', shouldGenerate.toString());
+            console.log(shouldGenerate ? '✅ Proceeding with release note generation' : '⏩ Skipping release note generation');
+
+      # 3️⃣ Generate release notes using Decathlon only when required
+      - name: Generate release notes
+        if: steps.check_labels.outputs.should_generate == 'true'
+        uses: Decathlon/release-notes-generator-action@98423db7024696a339f3988ac8a2b051c5860741 # v3.1.6
+        with:
+          output_file: "release.md"
+          include_labels: add_release_note
+          exclude_labels: skip_release_note
+          github_token: ${{ github.token }}
+
+      # 4️⃣ Commit and push updated release.md if it changed
+      - name: Commit and push updated release notes
+        if: steps.check_labels.outputs.should_generate == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add release.md
+          if git diff --cached --quiet; then
+            echo "No changes detected in release.md — skipping commit."
+          else
+            git commit -m "docs: update release.md after merge of #${{ github.event.pull_request.number }}"
+            git push origin HEAD:${GITHUB_REF#refs/heads/}
+            echo "✅ Release notes updated and pushed."
+          fi
