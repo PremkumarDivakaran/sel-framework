@@ -13,4 +13,3 @@ build/
 *.log
 logs/
 *.tmp
-*.bak
