@@ -1,0 +1,60 @@
+name: master
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref_name }}'
+  cancel-in-progress: false
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  id-token: write
+  actions: read
+
+jobs:
+  print-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Print workflow information
+        run: |
+          echo "=========================================="
+          echo "Workflow Name: ${{ github.workflow }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run Number: ${{ github.run_number }}"
+          echo "=========================================="
+
+      - name: Print environment details
+        run: |
+          echo "=========================================="
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Name: ${{ runner.name }}"
+          echo "Current Date: $(date)"
+          echo "Working Directory: $(pwd)"
+          echo "=========================================="
+
+      - name: Print project structure
+        run: |
+          echo "=========================================="
+          echo "Project Files:"
+          ls -la
+          echo "=========================================="
+
+      - name: Success message
+        run: |
+          echo "=========================================="
+          echo "Master branch workflow completed successfully!"
+          echo "No tests or builds were executed."
+          echo "=========================================="
