@@ -1,8 +1,13 @@
-### Next Release
+### Release 1.0.0
 
+#### Database
 
-  + **Added API support for User**
-  + PR #7 by @PremkumarDivakaran
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
-- Test release note generator (#5) by @PremkumarDivakaran
-- Test release note generator - New notes added!!!! (#6) by @PremkumarDivakaran
++ There is new update in DB. 
++ There is some schema changes in DB.
+
+### Release 2.0.0
+
+#### API
+
++ There is new update in API. 
++ There is some schema changes in API Schema.
