@@ -18,14 +18,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      # 1️⃣ Fetch PR labels
+      # Fetch PR labels
       - name: Fetch PR Labels
         id: fetch-labels
         uses: ./.github/actions/common/fetch-pr-label
         with:
           github_token: ${{ github.token }}
 
-      # 2️⃣ Decide if release notes should be generated
+      # Decide if release notes should be generated
       - name: Check label rules
         id: check_labels
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -42,7 +42,7 @@ jobs:
             core.setOutput('should_generate', shouldGenerate.toString());
             console.log(shouldGenerate ? '✅ Proceeding with release note generation' : '⏩ Skipping release note generation');
 
-      # 3️⃣ Generate release notes using Decathlon only when required
+      # Generate release notes using Decathlon only when required
       - name: Generate release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -59,7 +59,7 @@ jobs:
             
             console.log(`📝 Added release note entry:\n${line}`);
 
-      # 4️⃣ Commit and push updated releases.md if it changed
+      # Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         run: |
@@ -73,20 +73,3 @@ jobs:
             git push origin HEAD:${GITHUB_REF#refs/heads/}
             echo "✅ Release notes updated and pushed."
           fi
-
-      # Print release.md content for verification
-      - name: Append PR details to release.md
-        if: steps.check.outputs.should_generate == 'true'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          github-token: ${{ github.token }}
-          script: |
-            const fs = require('fs');
-            const pr = context.payload.pull_request;
-            const line = `- ${pr.title} (#${pr.number}) by @${pr.user.login}\n`;
-            
-            const file = 'docs/external/releases.md';
-            fs.mkdirSync('docs/external', { recursive: true });
-            fs.appendFileSync(file, line);
-            console.log(`📝 Added release note entry:\n${line}`);
-            console.log('Current file content:\n', fs.readFileSync(file, 'utf8'));
