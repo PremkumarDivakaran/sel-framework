@@ -1,8 +1,3 @@
-### Next Release
-
-**Add Multi User feature**
-  + PR #9 by @PremkumarDivakaran 
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
 ### Release 1.0.0
 
 #### Database
