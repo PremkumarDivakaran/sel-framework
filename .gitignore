@@ -15,3 +15,5 @@ logs/
 *.tmp
 *.bak
 *.swp
+*.class
+out/
