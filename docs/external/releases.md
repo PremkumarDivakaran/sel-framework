@@ -11,3 +11,10 @@
 
 + There is new update in API. 
 + There is some schema changes in API Schema.
+
+### Next Release
+
+
+  **Upgrade Library for API**
+  + PR #10 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
