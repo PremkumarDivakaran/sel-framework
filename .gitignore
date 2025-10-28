@@ -8,3 +8,9 @@ target/
 */.DS_Store
 */.idea
 */.gradle
+.gradle
+build/
+*.log
+logs/
+*.tmp
+*.bak
