@@ -16,4 +16,5 @@ logs/
 *.bak
 *.swp
 *.class
+out/
 
