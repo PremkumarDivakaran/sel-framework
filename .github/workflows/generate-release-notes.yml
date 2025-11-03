@@ -1,4 +1,4 @@
-name: "Generate Release Notes on PR"
+name: "Auto Generate Release Notes"
 
 on:
   pull_request:
@@ -15,16 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
+      # Fetch PR labels
       - name: Fetch PR Labels
         id: fetch-labels
         uses: ./.github/actions/common/fetch-pr-label
         with:
           github_token: ${{ github.token }}
 
+      # Decide if release notes should be generated
       - name: Check label rules
         id: check_labels
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -39,8 +40,9 @@ jobs:
             const shouldGenerate = add && !skip;
 
             core.setOutput('should_generate', shouldGenerate.toString());
-            console.log(shouldGenerate ? 'Proceeding with release note generation' : 'Skipping release note generation');
+            console.log(shouldGenerate ? '✅ Proceeding with release note generation' : '⏩ Skipping release note generation');
 
+      # Generate release notes using Decathlon only when required
       - name: Generate release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -73,27 +75,19 @@ jobs:
               match => `${match}\n${newLine}`
             );
             fs.writeFileSync(path, updatedContent.trim() + '\n', 'utf8');
-            console.log(`Added release note for PR #${pr.number} at the bottom.`);
+            console.log(`📝 Added release note for PR #${pr.number} at the bottom.`);
 
+      # Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          # Fetch latest changes from main
-          git fetch origin main
-          
-          # Ensure we're on the main branch (not detached HEAD)
-          git checkout main
-          
-          # Pull any new changes with rebase
-          git pull --rebase origin main
-          
           git add docs/external/releases.md
           if git diff --cached --quiet; then
             echo "No changes detected in releases.md — skipping commit."
           else
             git commit -m "docs: update releases.md after merge of #${{ github.event.pull_request.number }}"
             git push origin HEAD:${GITHUB_REF#refs/heads/}
-            echo "Release notes updated and pushed."
+            echo "✅ Release notes updated and pushed."
           fi
