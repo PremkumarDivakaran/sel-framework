@@ -80,6 +80,15 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          # Fetch latest changes from master
+          git fetch origin master
+          
+          # Ensure we're on the master branch (not detached HEAD)
+          git checkout master
+          
+          # Pull any new changes with rebase
+          git pull --rebase origin master
+          
           git add docs/external/releases.md
           if git diff --cached --quiet; then
             echo "No changes detected in releases.md — skipping commit."
