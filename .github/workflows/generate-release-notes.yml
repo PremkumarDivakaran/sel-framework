@@ -80,14 +80,14 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          # Fetch latest changes from master
-          git fetch origin master
+          # Fetch latest changes from main
+          git fetch origin main
           
-          # Ensure we're on the master branch (not detached HEAD)
-          git checkout master
+          # Ensure we're on the main branch (not detached HEAD)
+          git checkout main
           
           # Pull any new changes with rebase
-          git pull --rebase origin master
+          git pull --rebase origin main
           
           git add docs/external/releases.md
           if git diff --cached --quiet; then
