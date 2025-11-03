@@ -25,8 +25,8 @@ jobs:
         with:
           github-token: ${{ github.token }}
           script: |
-            const labels = context.payload.pull_request.labels.map(l => l.name);
-            console.log(`PR labels at merge time: ${labels.length ? labels.join(', ') : 'none'}`);
+            const labels = ('${{ steps.fetch-labels.outputs.labels }}' || '').split(',').map(l => l.trim());
+            console.log(`PR labels: ${labels.length ? labels.join(', ') : 'none'}`);
 
             const add = labels.includes('add_release_note');
             const skip = labels.includes('skip_release_note');
