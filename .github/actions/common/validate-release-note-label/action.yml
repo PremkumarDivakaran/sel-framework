@@ -7,8 +7,6 @@ runs:
     - name: Fetch PR Labels
       id: fetch-labels
       uses: ./.github/actions/common/fetch-pr-label
-      with:
-        github_token: ${{ github.token }}
 
     - name: Validate Required Labels
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1

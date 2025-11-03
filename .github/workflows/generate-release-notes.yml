@@ -22,8 +22,6 @@ jobs:
       - name: Fetch PR Labels
         id: fetch-labels
         uses: ./.github/actions/common/fetch-pr-label
-        with:
-          github_token: ${{ github.token }}
 
       # Decide if release notes should be generated
       - name: Check label rules
