@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   generate-release-notes:
@@ -77,17 +77,50 @@ jobs:
             fs.writeFileSync(path, updatedContent.trim() + '\n', 'utf8');
             console.log(`📝 Added release note for PR #${pr.number} at the bottom.`);
 
-      # Commit and push updated releases.md if it changed
-      - name: Commit and push updated release notes
+      # Create PR for release notes update using GitHub CLI
+      - name: Create Pull Request for release notes
         if: steps.check_labels.outputs.should_generate == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          ORIGINAL_BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH_NAME="${ORIGINAL_BRANCH}-1"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes
           git add docs/external/releases.md
           if git diff --cached --quiet; then
-            echo "No changes detected in releases.md — skipping commit."
-          else
-            git commit -m "docs: update releases.md after merge of #${{ github.event.pull_request.number }}"
-            git push origin HEAD:${GITHUB_REF#refs/heads/}
-            echo "✅ Release notes updated and pushed."
+            echo "No changes detected in releases.md — skipping PR creation."
+            exit 0
           fi
+          
+          # Create and push to new branch
+          git checkout -b "${BRANCH_NAME}"
+          git commit -m "docs: update releases.md after merge of #${PR_NUMBER}"
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR using GitHub CLI with custom title format
+          PR_BODY="Auto-generated release notes update for PR #${PR_NUMBER}.
+          
+          This PR was automatically created by the release notes workflow.
+          
+          ### Changes
+          - Added release note entry for: ${PR_TITLE}
+          
+          **Note:** @PremkumarDivakaran is automatically assigned as reviewer (CODEOWNER of releases.md).
+          
+          Please review and merge to keep release notes up to date."
+          
+          gh pr create \
+            --title "${PR_TITLE} - Releasenotes" \
+            --body "${PR_BODY}" \
+            --base main \
+            --head "${BRANCH_NAME}" \
+            --label "skip_release_note,documentation"
+          
+          echo "✅ Pull request created successfully: ${PR_TITLE} - Releasenotes"
