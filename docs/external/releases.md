@@ -38,3 +38,7 @@
   **Update releases.md**
   + PR #39 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
+
+  **SEL-2019  Update pull request workflow**
+  + PR #42 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
