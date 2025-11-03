@@ -34,3 +34,7 @@
   **New Updteat**
   + PR #34 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
+
+  **Update .gitignore**
+  + PR #35 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
