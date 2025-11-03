@@ -23,18 +23,3 @@
   + PR #14 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
 
-  **Update Something**
-  + PR #29 by @PremkumarDivakaran
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
-
-  **Update .APis**
-  + PR #31 by @PremkumarDivakaran
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
-
-  **New Updteat**
-  + PR #34 by @PremkumarDivakaran
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
-
-  **Update .gitignore**
-  + PR #35 by @PremkumarDivakaran
-  + _TODO: Add detailed release note (API details, impact, or feature summary)_
