@@ -26,7 +26,7 @@ public class HomePage extends Base {
 
     public String getTitle(){
         waitForSeconds(2000);
-        return getText(locateElement(Locators.CSS,".oxd-topbar-header-breadcrumb h6"));
+        return getText(locateElement(Locators.CSS,".oxd-topbar-header-breadcrumb h6 1"));
     }
 
 }

@@ -1,4 +1,4 @@
-name: "Auto Generate Release Notes"
+name: "Generate Release Notes on PR"
 
 on:
   pull_request:
@@ -15,34 +15,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      # Fetch PR labels
-      - name: Fetch PR Labels
-        id: fetch-labels
-        uses: ./.github/actions/common/fetch-pr-label
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          github_token: ${{ github.token }}
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          repository: cisco-sbg/pinacl-accelerate
+          path: pinacl-accelerate
+          token: '${{ secrets.GH_PAT }}'
 
-      # Decide if release notes should be generated
       - name: Check label rules
         id: check_labels
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           github-token: ${{ github.token }}
           script: |
-            const labels = ('${{ steps.fetch-labels.outputs.labels }}' || '').split(',').map(l => l.trim());
-            console.log(`PR labels: ${labels.length ? labels.join(', ') : 'none'}`);
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            console.log(`PR labels at merge time: ${labels.length ? labels.join(', ') : 'none'}`);
 
             const add = labels.includes('add_release_note');
             const skip = labels.includes('skip_release_note');
             const shouldGenerate = add && !skip;
 
             core.setOutput('should_generate', shouldGenerate.toString());
-            console.log(shouldGenerate ? '✅ Proceeding with release note generation' : '⏩ Skipping release note generation');
+            console.log(shouldGenerate ? 'Proceeding with release note generation' : 'Skipping release note generation');
 
-      # Generate release notes using Decathlon only when required
       - name: Generate release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -56,7 +51,7 @@ jobs:
               **${ pr.title }**
               + PR #${pr.number} by @${pr.user.login}
               + _TODO: Add detailed release note (API details, impact, or feature summary)_\n`;
-              
+            
             fs.mkdirSync('docs/external', { recursive: true });
             if (!fs.existsSync(path)) {
               fs.writeFileSync(path, '### Next Release\n\n');
@@ -75,9 +70,8 @@ jobs:
               match => `${match}\n${newLine}`
             );
             fs.writeFileSync(path, updatedContent.trim() + '\n', 'utf8');
-            console.log(`📝 Added release note for PR #${pr.number} at the bottom.`);
+            console.log(`Added release note for PR #${pr.number} at the bottom.`);
 
-      # Commit and push updated releases.md if it changed
       - name: Commit and push updated release notes
         if: steps.check_labels.outputs.should_generate == 'true'
         run: |
@@ -89,5 +83,5 @@ jobs:
           else
             git commit -m "docs: update releases.md after merge of #${{ github.event.pull_request.number }}"
             git push origin HEAD:${GITHUB_REF#refs/heads/}
-            echo "✅ Release notes updated and pushed."
+            echo "Release notes updated and pushed."
           fi
