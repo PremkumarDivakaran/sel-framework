@@ -40,3 +40,31 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
       - name: Enforce release note label
         uses: ./.github/actions/common/validate-release-note-label
+
+  print-info-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Print workflow information
+        run: |
+          echo "=========================================="
+          echo "Workflow Name: ${{ github.workflow }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit SHA: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run Number: ${{ github.run_number }}"
+          echo "=========================================="
+
+      - name: Print environment details
+        run: |
+          echo "=========================================="
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Name: ${{ runner.name }}"
+          echo "Current Date: $(date)"
+          echo "Working Directory: $(pwd)"
+          echo "=========================================="
