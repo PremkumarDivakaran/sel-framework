@@ -22,6 +22,7 @@ permissions:
   # This is required for pulling artifacts
   actions: read
 jobs:
+
   pre-run:
     runs-on: ubuntu-latest
     steps:
@@ -38,4 +39,4 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
       - name: Enforce release note label
-        uses: ./pinacl-accelerate/.github/actions/common/validate-release-note-label
+        uses: ./.github/actions/common/validate-release-note-label
