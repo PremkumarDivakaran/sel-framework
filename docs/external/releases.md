@@ -23,3 +23,6 @@
   + PR #14 by @PremkumarDivakaran
   + _TODO: Add detailed release note (API details, impact, or feature summary)_
 
+  **Update releases.md**
+  + PR #36 by @PremkumarDivakaran
+  + _TODO: Add detailed release note (API details, impact, or feature summary)_
