@@ -18,4 +18,4 @@ logs/
 *.class
 out/
 .vscode/
-out_/
+out/
